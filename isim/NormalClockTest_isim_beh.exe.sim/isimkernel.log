@@ -1,0 +1,10 @@
+Command line:
+   NormalClockTest_isim_beh.exe
+     -simmode  gui
+     -simrunnum  0
+     -socket  39279
+
+Tue Dec  4 06:06:06 2018
+
+
+ Elaboration Time: 0.02 sec
