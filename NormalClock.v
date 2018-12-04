@@ -20,9 +20,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 module NormalClock(
 	input clk,
-	input set,
-	input op1,
-	input op2,
 	input reset,
 	
 	output reg isPM,
@@ -31,22 +28,11 @@ module NormalClock(
 	output reg [4:0] hours
     );
 	 
-	 reg [1:0] setMode;
-	 
 	 initial begin
 		seconds <= 0;
 		minutes <= 0;
 		hours <= 0;
-		setMode <= 0;
 		isPM <= 0;
-	 end
-	 
-	 always @ (reset) begin
-		if (reset) begin
-			seconds <= 0;
-			minutes <= 0;
-			hours <= 0;
-		end
 	 end
 	 
 	 always @ (posedge clk) begin
@@ -56,17 +42,17 @@ module NormalClock(
 			hours <= 0;
 		end
 		else begin
-			if (seconds < 60) begin
+			if (seconds < 59) begin
 				seconds <= seconds + 1;
 			end
 			else begin
 				seconds <= 0;
-				if (minutes < 60) begin
+				if (minutes < 59) begin
 					minutes <= minutes + 1;
 				end
 				else begin
 					minutes <= 0;
-					if (hours < 24) begin
+					if (hours < 23) begin
 						hours <= hours + 1;
 					end
 					else begin

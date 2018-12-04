@@ -1,1 +1,1 @@
--intstyle "ise" -incremental -lib "unisims_ver" -lib "unimacro_ver" -lib "xilinxcorelib_ver" -o "/home/taebum/Workspace/Final/NormalClockTest_isim_beh.exe" -prj "/home/taebum/Workspace/Final/NormalClockTest_beh.prj" "work.NormalClockTest" "work.glbl" 
+-intstyle "ise" -incremental -lib "unisims_ver" -lib "unimacro_ver" -lib "xilinxcorelib_ver" -o "/home/taebum/Workspace/Final/StopWatchTest_isim_beh.exe" -prj "/home/taebum/Workspace/Final/StopWatchTest_beh.prj" "work.StopWatchTest" "work.glbl" 

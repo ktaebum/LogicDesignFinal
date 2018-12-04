@@ -26,9 +26,6 @@ module NormalClockTest;
 
 	// Inputs
 	reg clk;
-	reg set;
-	reg op1;
-	reg op2;
 	reg reset;
 
 	// Outputs
@@ -40,9 +37,6 @@ module NormalClockTest;
 	// Instantiate the Unit Under Test (UUT)
 	NormalClock uut (
 		.clk(clk), 
-		.set(set), 
-		.op1(op1), 
-		.op2(op2), 
 		.reset(reset), 
 		.isPM(isPM), 
 		.seconds(seconds), 

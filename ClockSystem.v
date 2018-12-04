@@ -34,13 +34,16 @@ module ClockSystem(
 	output [6:0] disp5
     );
 	 
+	 reg [1:0] currentMode;
+	 
 	 
 	 // for normal clock
+	 wire w_isPM;
 	 wire [4:0] w_hours;
 	 wire [5:0] w_minutes;
 	 wire [5:0] w_seconds;
 	 
-	 NormalClock normalclock (clk, set, op1, op2, reset, w_seconds, w_minutes, w_hours);
+	 NormalClock normalclock (clk, reset, w_isPM, w_seconds, w_minutes, w_hours);
 	 
 
 
