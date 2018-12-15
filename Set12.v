@@ -20,6 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module Set12(
 	input clk,
+	input reset,
 	input set,
 	input up,
 	input down,
@@ -27,8 +28,8 @@ module Set12(
 	output reg propagate,
 	output reg isPM,
 	output reg [3:0] hours,
-	output reg [5:0] minutes
-	
+	output reg [5:0] minutes,
+	output reg [1:0] currentState
     );
 	parameter INITIAL = 2'b00; // initial reset state
 	parameter PM = 2'b01; // PM Setting
@@ -42,12 +43,17 @@ module Set12(
 		isPM <= 0;
 		hours <= 0;
 		minutes <= 0;
-		setting_state <= PM;
+		setting_state <= INITIAL;
+	end
+	
+	always @ (*) begin
+		currentState <= setting_state;
 	end
 	
 	always @ (posedge clk) begin
 		case (setting_state)
 			INITIAL: begin
+				propagate <= 0;
 				if (set) begin
 					setting_state <= PM;
 					isPM <= 0;

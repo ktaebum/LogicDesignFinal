@@ -35,8 +35,14 @@ module Displayer(
 			4'd7: display = 7'b1110000;
 			4'd8: display = 7'b1111111;
 			4'd9: display = 7'b1111011;
-			//4'd10: display = 7'b1110111;
-			//4'd11: display = 7'b0011111;
+			// offsign
+			4'd10: display = 7'b0000000;
+			// - sign for alarm display
+			4'd11: display = 7'b0000001;
+			// big A (for AM)
+			4'd12: display = 7'b1110111;
+			// big P (for PM)
+			4'd13: display = 7'b1100111;
 			//4'd12: display = 7'b1001110;
 			//4'd13: display = 7'b0111101;
 			//4'd14: display = 7'b1001111;
