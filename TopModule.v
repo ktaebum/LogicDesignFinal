@@ -53,7 +53,9 @@ module TopModule(
 	
 	// 1Hz clk
 	wire real_clk;
-	RealClockModulator realclockmodulator (clk, reset, real_clk);
+	// for blink enable
+	wire real_quarter;
+	RealClockModulator realclockmodulator (clk, reset, real_clk, real_quarter);
 	
 	wire debounced_mode;
 	wire pulsed_mode;
@@ -108,7 +110,7 @@ module TopModule(
 	
 	StopWatchWrapper stopwatchwrapper (currentMode, mili_clk, pulsed_set_slow, pulsed_op1_slow, reset,
 		stop_disp0, stop_disp1, stop_disp2, stop_disp3, stop_disp4, stop_disp5);
-	ClockWrapper clockwrapper (currentMode, clk, real_clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
+	ClockWrapper clockwrapper (currentMode, real_quarter, clk, real_clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
 		clock_disp0, clock_disp1, clock_disp2, clock_disp3, clock_disp4, clock_disp5);
 		
 	always @ (posedge clk or posedge reset) begin

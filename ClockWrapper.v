@@ -20,6 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module ClockWrapper(
 	input [1:0] currentMode,
+	input real_quarter,
 	input clk,
 	input real_clk,
 	input pulsed_set,
@@ -71,7 +72,7 @@ module ClockWrapper(
 		disp12_0, disp12_1, disp12_2, disp12_3, disp12_4, disp12_5, disp12_state,
 		disp12to24_isPM, disp12to24_hours, disp12to24_minutes, disp12to24_propagate);
 		
-	SimpleClock24 simpleclock24 (!dispMode && (currentMode == 0), disp12to24_propagate, disp12to24_isPM, disp12to24_hours, disp12to24_minutes,
+	SimpleClock24 simpleclock24 (!dispMode && (currentMode == 0), real_quarter, disp12to24_propagate, disp12to24_isPM, disp12to24_hours, disp12to24_minutes,
 		clk, real_clk, pulsed_set, reset, pulsed_up, pulsed_down, 
 		disp24_0, disp24_1, disp24_2, disp24_3, disp24_4, disp24_5, disp24_state,
 		disp24to12_hours, disp24to12_minutes, disp24to12_propagate);

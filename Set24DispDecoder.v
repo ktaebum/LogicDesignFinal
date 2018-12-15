@@ -19,7 +19,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Set24DispDecoder(
-	input clk,
+	input [1:0] currentState,
+	input real_quarter,
 	input [4:0] hours,
 	input [5:0] minutes,
 	
@@ -44,12 +45,12 @@ module Set24DispDecoder(
 	end
 	
 	
-	BlinkDisplayer displayer0 (clk, h10, disp0);
-	BlinkDisplayer displayer1 (clk, h1, disp1);
-	BlinkDisplayer displayer2 (clk, m10, disp2);
-	BlinkDisplayer displayer3 (clk, m1, disp3);
-	BlinkDisplayer displayer4 (clk, 0, disp4);
-	BlinkDisplayer displayer5 (clk, 0, disp5);
+	BlinkDisplayer displayer0 ((real_quarter && (currentState == 1)) || (currentState != 1), h10, disp0);
+	BlinkDisplayer displayer1 ((real_quarter && (currentState == 1)) || (currentState != 1), h1, disp1);
+	BlinkDisplayer displayer2 ((real_quarter && (currentState == 2)) || (currentState != 2), m10, disp2);
+	BlinkDisplayer displayer3 ((real_quarter && (currentState == 2)) || (currentState != 2), m1, disp3);
+	Displayer displayer4 (0, disp4);
+	Displayer displayer5 (0, disp5);
 	 
 	
 	always @ (*) begin

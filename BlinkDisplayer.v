@@ -19,21 +19,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module BlinkDisplayer(
-	input clk,
+	input isOn,
 	input [3:0] bch,
 	output reg [6:0] display
     );
-	 
-	reg [22:0] counter;
-	reg isOn;
-	initial begin
-		counter <= 0;
-		isOn <= 1;
-	end
 	
-	always @ (posedge clk) begin
-		if (counter < 6250000) begin
-			if (isOn) begin
+	always @ (*) begin
+		if (isOn) begin
 			case (bch)
 				4'd0: display <= 7'b1111110;
 				4'd1: display <= 7'b0110000;
@@ -54,16 +46,9 @@ module BlinkDisplayer(
 				4'd13: display <= 7'b1100111;
 				default: display <= 7'b0000000;
 			endcase
-			end
-			else begin
-				display <= 7'b0000000;
-			end
-			counter <= counter + 1;
 		end
 		else begin
-			// counter == 6250000
-			counter <= 0;
-			isOn <= isOn + 1;
+			display <= 7'b0000000;
 		end
 	end
 	
