@@ -41,7 +41,7 @@ module Set12(
 	initial begin
 		propagate <= 0;
 		isPM <= 0;
-		hours <= 0;
+		hours <= 12;
 		minutes <= 0;
 		setting_state <= INITIAL;
 	end
@@ -50,14 +50,22 @@ module Set12(
 		currentState <= setting_state;
 	end
 	
-	always @ (posedge clk) begin
+	always @ (posedge clk or posedge reset) begin
+		if (reset) begin
+			propagate <= 0;
+			isPM <= 0;
+			hours <= 12;
+			minutes <= 0;
+			setting_state <= INITIAL;
+		end
+		else begin
 		case (setting_state)
 			INITIAL: begin
 				propagate <= 0;
 				if (set) begin
 					setting_state <= PM;
 					isPM <= 0;
-					hours <= 0;
+					hours <= 12;
 					minutes <= 0;
 					propagate <= 0;
 				end
@@ -138,5 +146,6 @@ module Set12(
 				end
 			end
 		endcase
+		end
 	end
 endmodule

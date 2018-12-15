@@ -35,7 +35,7 @@ module Clock12(
 	 
 	initial begin
 		isPM <= 0;
-		hours <= 0;
+		hours <= 12;
 		minutes <= 0;
 		seconds <= 0;
 	end
@@ -43,7 +43,7 @@ module Clock12(
 	always @ (posedge propagate or posedge reset or posedge clk) begin
 		if (reset) begin
 			isPM <= 0;
-			hours <= 0;
+			hours <= 12;
 			minutes <= 0;
 			seconds <= 0;
 		end
@@ -68,9 +68,11 @@ module Clock12(
 						minutes <= 0;
 						if (hours == 12) begin
 							hours <= 1;
-							isPM <= isPM + 1;
 						end
 						else begin
+							if (hours == 11) begin
+								isPM <= isPM + 1;
+							end
 							hours <= hours + 1;
 						end
 					end
