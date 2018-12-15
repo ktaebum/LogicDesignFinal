@@ -43,12 +43,6 @@ module SimpleClock12(
 	output w_propagate
     );
 	// 12 system clock fpga board test
-	// wire w_propagate;
-	// wire w_in_isPM;
-	// wire [4:0] w_in_hours;
-	// wire [5:0] w_in_minutes;
-	// wire [1:0] w_current_state;
-	
 	wire w_isPM;
 	wire [4:0] w_hours;
 	wire [5:0] w_minutes;

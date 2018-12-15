@@ -19,6 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module StopWatch(
+	input [1:0] currentMode,
 	input m_clk,
 	input set,
 	input clear,
@@ -45,6 +46,7 @@ module StopWatch(
 			m_seconds <= 0;
 		end
 		else begin
+			if (currentMode == 2) begin
 			if (set) begin
 				isStop <= isStop + 1;
 			end
@@ -78,6 +80,7 @@ module StopWatch(
 						isStop <= isStop + 1;
 					end
 				end
+			end
 			end
 		end
 	end

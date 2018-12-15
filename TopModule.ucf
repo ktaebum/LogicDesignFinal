@@ -1,0 +1,55 @@
+NET "op1" LOC = P49;
+NET "op2" LOC = P50;
+NET "reset" LOC = P54;
+NET "mode" LOC = P47;
+NET "set" LOC = P48;
+
+NET "tdisp0[6]" LOC = P3;
+NET "tdisp0[5]" LOC = P4;
+NET "tdisp0[4]" LOC = P5;
+NET "tdisp0[3]" LOC = P6;
+NET "tdisp0[2]" LOC = P7;
+NET "tdisp0[1]" LOC = P8;
+NET "tdisp0[0]" LOC = P10;
+
+NET "tdisp1[6]" LOC = P11;
+NET "tdisp1[5]" LOC = P12;
+NET "tdisp1[4]" LOC = P13;
+NET "tdisp1[3]" LOC = P15;
+NET "tdisp1[2]" LOC = P16;
+NET "tdisp1[1]" LOC = P18;
+NET "tdisp1[0]" LOC = P19;
+
+NET "tdisp2[6]" LOC = P20;
+NET "tdisp2[5]" LOC = P21;
+NET "tdisp2[4]" LOC = P24;
+NET "tdisp2[3]" LOC = P25;
+NET "tdisp2[2]" LOC = P27;
+NET "tdisp2[1]" LOC = P28;
+NET "tdisp2[0]" LOC = P29;
+
+NET "tdisp3[6]" LOC = P55;
+NET "tdisp3[5]" LOC = P58;
+NET "tdisp3[4]" LOC = P59;
+NET "tdisp3[3]" LOC = P60;
+NET "tdisp3[2]" LOC = P62;
+NET "tdisp3[1]" LOC = P63;
+NET "tdisp3[0]" LOC = P64;
+
+NET "tdisp4[6]" LOC = P68;
+NET "tdisp4[5]" LOC = P69;
+NET "tdisp4[4]" LOC = P70;
+NET "tdisp4[3]" LOC = P71;
+NET "tdisp4[2]" LOC = P72;
+NET "tdisp4[1]" LOC = P75;
+NET "tdisp4[0]" LOC = P76;
+
+NET "tdisp5[6]" LOC = P77;
+NET "tdisp5[5]" LOC = P78;
+NET "tdisp5[4]" LOC = P79;
+NET "tdisp5[3]" LOC = P82;
+NET "tdisp5[2]" LOC = P83;
+NET "tdisp5[1]" LOC = P84;
+NET "tdisp5[0]" LOC = P85;
+
+NET "clk" LOC = P57;
