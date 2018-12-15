@@ -69,7 +69,7 @@ module SimpleClock24(
 	
 	Set24 set24 (setEnable, clk, reset, pulsed_set, pulsed_up, pulsed_down,
 		w_propagate, w_in_hours, w_in_minutes, w_current_state);
-	Set24DispDecoder set24dispdecoder (w_in_hours, w_in_minutes, set_disp0, set_disp1, set_disp2, set_disp3, set_disp4, set_disp5);
+	Set24DispDecoder set24dispdecoder (clk, w_in_hours, w_in_minutes, set_disp0, set_disp1, set_disp2, set_disp3, set_disp4, set_disp5);
 	Clock24 clock24 (setEnable, real_clk, reset, w_propagate || extern12_propagate, 
 		extern12_isPM, extern12_hours, extern12_minutes, 
 		w_in_hours, w_in_minutes, w_hours, w_minutes, w_seconds);

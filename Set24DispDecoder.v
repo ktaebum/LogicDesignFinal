@@ -19,6 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Set24DispDecoder(
+	input clk,
 	input [4:0] hours,
 	input [5:0] minutes,
 	
@@ -42,12 +43,13 @@ module Set24DispDecoder(
 		m1 = 0;
 	end
 	
-	Displayer displayer0 (h10, disp0);
-	Displayer displayer1 (h1, disp1);
-	Displayer displayer2 (m10, disp2);
-	Displayer displayer3 (m1, disp3);
-	Displayer displayer4 (0, disp4);
-	Displayer displayer5 (0, disp5);
+	
+	BlinkDisplayer displayer0 (clk, h10, disp0);
+	BlinkDisplayer displayer1 (clk, h1, disp1);
+	BlinkDisplayer displayer2 (clk, m10, disp2);
+	BlinkDisplayer displayer3 (clk, m1, disp3);
+	BlinkDisplayer displayer4 (clk, 0, disp4);
+	BlinkDisplayer displayer5 (clk, 0, disp5);
 	 
 	
 	always @ (*) begin

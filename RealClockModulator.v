@@ -24,7 +24,7 @@ module RealClockModulator(
 	output reg usr_clk
     );
 	 
-	 reg [27:0] counter;
+	 reg [24:0] counter;
 	 
 	 initial begin
 		counter <= 0;

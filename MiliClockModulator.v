@@ -24,7 +24,7 @@ module MiliClockModulator(
 	output reg usr_clk
     );
 	 
-	 reg [27:0] counter;
+	 reg [17:0] counter;
 	 
 	 initial begin
 		counter <= 0;

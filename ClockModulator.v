@@ -24,7 +24,7 @@ module ClockModulator(
 	output reg usr_clk
     );
 	 
-	 reg [27:0] counter;
+	 reg [14:0] counter;
 	 
 	 initial begin
 		counter <= 0;
@@ -38,7 +38,7 @@ module ClockModulator(
 		end
 		else begin
 			counter <= counter + 1;
-			if (counter == 50000) begin
+			if (counter == 25000) begin
 				counter <= 0;
 				usr_clk <= usr_clk +1;
 			end
