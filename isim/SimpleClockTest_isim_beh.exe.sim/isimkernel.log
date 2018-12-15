@@ -1,0 +1,29 @@
+Command line:
+   SimpleClockTest_isim_beh.exe
+     -simmode  gui
+     -simrunnum  0
+     -socket  54973
+
+Sat Dec 15 14:48:10 2018
+
+
+ Elaboration Time: 0.01 sec
+
+ Current Memory Usage: 196.948 Meg
+
+ Total Signals          : 119
+ Total Nets             : 287
+ Total Signal Drivers   : 55
+ Total Blocks           : 27
+ Total Primitive Blocks : 23
+ Total Processes        : 99
+ Total Traceable Variables  : 87
+ Total Scalar Nets and Variables : 680
+Total Line Count : 452
+
+ Total Simulation Time: 0.03 sec
+
+ Current Memory Usage: 272.45 Meg
+
+Sat Dec 15 14:48:26 2018
+
