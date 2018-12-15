@@ -19,6 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Set24(
+	input setEnable,
    input clk,
 	input reset,
 	input set,
@@ -56,6 +57,7 @@ module Set24(
 			setting_state <= INITIAL;
 		end
 		else begin
+			if (setEnable) begin
 			case (setting_state)
 				INITIAL: begin
 					propagate <= 0;
@@ -124,6 +126,7 @@ module Set24(
 					end
 				end
 			endcase
+			end
 		end
 	end
 endmodule

@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date:    16:13:52 12/15/2018 
+// Create Date:    13:46:49 12/15/2018 
 // Design Name: 
-// Module Name:    SimpleClock12 
+// Module Name:    SimpleClock 
 // Project Name: 
 // Target Devices: 
 // Tool versions: 
@@ -18,12 +18,13 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module SimpleClock12(
-	input setEnable, 
-	input extern24_propagate,
-	input [4:0] extern24_hours,
-	input [5:0] extern24_minutes,
-   input clk,
+module SimpleClock24(
+	input setEnable,
+	input extern12_propagate,
+	input extern12_isPM,
+	input [3:0] extern12_hours,
+	input [5:0] extern12_minutes,
+	input clk,
 	input real_clk,
 	input pulsed_set,
 	input reset,
@@ -37,21 +38,19 @@ module SimpleClock12(
 	output reg [6:0] disp4,
 	output reg [6:0] disp5,
 	output [1:0] w_current_state,
-	output w_in_isPM,
 	output [4:0] w_in_hours,
 	output [5:0] w_in_minutes,
 	output w_propagate
     );
-	// 12 system clock fpga board test
+	// 24 system clock fpga board test
 	// wire w_propagate;
-	// wire w_in_isPM;
 	// wire [4:0] w_in_hours;
 	// wire [5:0] w_in_minutes;
 	// wire [1:0] w_current_state;
-	
-	wire w_isPM;
 	wire [4:0] w_hours;
 	wire [5:0] w_minutes;
+	wire [5:0] w_seconds;
+	
 	
 	wire [6:0] clock_disp0;
 	wire [6:0] clock_disp1;
@@ -68,13 +67,13 @@ module SimpleClock12(
 	wire [6:0] set_disp5;
 	
 	
-	Set12 set12 (setEnable, clk, reset, pulsed_set, pulsed_up, pulsed_down, 
-		w_propagate, w_in_isPM, w_in_hours, w_in_minutes, w_current_state);
-	Set12DispDecoder set12dispdecoder (w_in_isPM, w_in_hours, w_in_minutes, set_disp0, set_disp1, set_disp2, set_disp3, set_disp4, set_disp5);
-	Clock12 clock12 (setEnable, real_clk, reset, w_propagate || extern24_propagate,
-		extern24_hours, extern24_minutes,
-		w_in_isPM, w_in_hours, w_in_minutes, w_isPM, w_hours, w_minutes);
-	Clock12DispDecoder clock12dispdecoder (w_isPM, w_hours, w_minutes, clock_disp0, clock_disp1, clock_disp2, clock_disp3, clock_disp4, clock_disp5);
+	Set24 set24 (setEnable, clk, reset, pulsed_set, pulsed_up, pulsed_down,
+		w_propagate, w_in_hours, w_in_minutes, w_current_state);
+	Set24DispDecoder set24dispdecoder (w_in_hours, w_in_minutes, set_disp0, set_disp1, set_disp2, set_disp3, set_disp4, set_disp5);
+	Clock24 clock24 (setEnable, real_clk, reset, w_propagate || extern12_propagate, 
+		extern12_isPM, extern12_hours, extern12_minutes, 
+		w_in_hours, w_in_minutes, w_hours, w_minutes, w_seconds);
+	Clock24DispDecoder clock24dispdecoder (w_hours, w_minutes, w_seconds, clock_disp0, clock_disp1, clock_disp2, clock_disp3, clock_disp4, clock_disp5);
 	
 	always @ (*) begin
 		if (w_current_state == 0) begin

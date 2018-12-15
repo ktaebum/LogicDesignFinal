@@ -68,6 +68,10 @@ module ClockWrapper(
 	wire [6:0] disp12_4;
 	wire [6:0] disp12_5;
 	wire [1:0] disp12_state;
+	wire disp12to24_isPM;
+	wire [3:0] disp12to24_hours;
+	wire [5:0] disp12to24_minutes;
+	wire disp12to24_propagate;
 	
 	wire [6:0] disp24_0;
 	wire [6:0] disp24_1;
@@ -76,12 +80,34 @@ module ClockWrapper(
 	wire [6:0] disp24_4;
 	wire [6:0] disp24_5;
 	wire [1:0] disp24_state;
+	wire [4:0] disp24to12_hours;
+	wire [5:0] disp24to12_minutes;
+	wire disp24to12_propagate;
 	
-	SimpleClock12 simpleclock12 (clk, real_clk, pulsed_set, reset, pulsed_up, pulsed_down, 
-		disp12_0, disp12_1, disp12_2, disp12_3, disp12_4, disp12_5, disp12_state);
+	
+	SimpleClock12 simpleclock12 (dispMode, disp24to12_propagate, disp24to12_hours, disp24to12_minutes,
+		clk, real_clk, pulsed_set, reset, pulsed_up, pulsed_down, 
+		disp12_0, disp12_1, disp12_2, disp12_3, disp12_4, disp12_5, disp12_state,
+		disp12to24_isPM, disp12to24_hours, disp12to24_minutes, disp12to24_propagate);
 		
-	SimpleClock24 simpleclock24 (clk, real_clk, pulsed_set, reset, pulsed_up, pulsed_down, 
-		disp24_0, disp24_1, disp24_2, disp24_3, disp24_4, disp24_5, disp24_state);
+	SimpleClock24 simpleclock24 (!dispMode, disp12to24_propagate, disp12to24_isPM, disp12to24_hours, disp12to24_minutes,
+		clk, real_clk, pulsed_set, reset, pulsed_up, pulsed_down, 
+		disp24_0, disp24_1, disp24_2, disp24_3, disp24_4, disp24_5, disp24_state,
+		disp24to12_hours, disp24to12_minutes, disp24to12_propagate);
+	
+	reg [4:0] hours12to24;
+	reg [5:0] minutes12to24;
+	reg isPM24to12;
+	reg [3:0] hours24to12;
+	reg [5:0] minutes24to12;
+	
+	initial begin
+		hours12to24 <= 0;
+		minutes12to24 <= 0;
+		isPM24to12 <= 0;
+		hours24to12 <= 0;
+		minutes24to12 <= 0;
+	end
 	
 	always @ (*) begin
 		if (dispMode) begin
@@ -101,6 +127,7 @@ module ClockWrapper(
 			disp4 <= disp24_4;
 			disp5 <= disp24_5;
 		end
+		
 	end
 	
 	always @ (posedge clk or posedge reset) begin

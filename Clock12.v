@@ -19,9 +19,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Clock12(
+	input enabled,
 	input clk,
 	input reset,
 	input propagate,
+	input [4:0] extern_hours,
+	input [5:0] extern_minutes,
 	input in_PM,
 	input [3:0] in_hours,
 	input [5:0] in_minutes,
@@ -49,10 +52,34 @@ module Clock12(
 		end
 		else begin
 			if (propagate) begin
-				isPM <= in_PM;
-				hours <= in_hours;
-				minutes <= in_minutes;
-				seconds <= 0;
+				if (enabled) begin
+					// propagation triggered from 12 system setter
+					isPM <= in_PM;
+					hours <= in_hours;
+					minutes <= in_minutes;
+					seconds <= 0;
+				end
+				else begin
+					// propagation triggered from 24 system setter
+					if (extern_hours == 0) begin
+						isPM <= 0;
+						hours <= 12;
+					end
+					else if (extern_hours > 0 && extern_hours < 12) begin
+						isPM <= 0;
+						hours <= extern_hours;
+					end
+					else if (extern_hours == 12) begin
+						isPM <= 1;
+						hours <= 12;
+					end
+					else begin
+						isPM <= 1;
+						hours <= extern_hours - 12;
+					end
+					minutes <= extern_minutes;
+					seconds <= 0;
+				end
 			end
 			else begin
 				// normal counter

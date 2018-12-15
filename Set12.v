@@ -19,6 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Set12(
+	input setEnable,
 	input clk,
 	input reset,
 	input set,
@@ -59,93 +60,95 @@ module Set12(
 			setting_state <= INITIAL;
 		end
 		else begin
-		case (setting_state)
-			INITIAL: begin
-				propagate <= 0;
-				if (set) begin
-					setting_state <= PM;
-					isPM <= 0;
-					hours <= 12;
-					minutes <= 0;
+			if (setEnable) begin
+			case (setting_state)
+				INITIAL: begin
 					propagate <= 0;
+					if (set) begin
+						setting_state <= PM;
+						isPM <= 0;
+						hours <= 12;
+						minutes <= 0;
+						propagate <= 0;
+					end
 				end
-			end
-			PM: begin
-				if (set) begin
-					setting_state <= HOUR;
-					propagate <= 0;
-				end
-				else begin
-					if (up) begin
-						// toggle
-						isPM <= isPM + 1;
+				PM: begin
+					if (set) begin
+						setting_state <= HOUR;
+						propagate <= 0;
 					end
 					else begin
-						if (down) begin
+						if (up) begin
 							// toggle
 							isPM <= isPM + 1;
 						end
+						else begin
+							if (down) begin
+								// toggle
+								isPM <= isPM + 1;
+							end
+						end
 					end
 				end
-			end
-			
-			HOUR: begin
-				if (set) begin
-					setting_state <= MINUTE;
-					propagate <= 0;
-				end
-				else begin
-					if (up) begin
-						if (hours == 12) begin
-							// goto 1
-							hours <= 1;
-						end
-						else begin
-							hours <= hours + 1;
-						end
+				
+				HOUR: begin
+					if (set) begin
+						setting_state <= MINUTE;
+						propagate <= 0;
 					end
 					else begin
-						if (down) begin
-							if (hours == 1) begin
-								// goto 12
-								hours <= 12;
+						if (up) begin
+							if (hours == 12) begin
+								// goto 1
+								hours <= 1;
 							end
 							else begin
-								hours <= hours - 1;
+								hours <= hours + 1;
 							end
-						end
-					end
-				end
-			end
-			
-			MINUTE: begin
-				if (set) begin
-					setting_state <= INITIAL;
-					propagate <= 1;
-				end
-				else begin
-					if (up) begin
-						if (minutes == 59) begin
-							// goto 0, do not carry
-							minutes <= 0;
 						end
 						else begin
-							minutes <= minutes + 1;
-						end
-					end
-					else begin
-						if (down) begin
-							if (minutes == 0) begin
-								minutes <= 59;
-							end
-							else begin
-								minutes <= minutes - 1;
+							if (down) begin
+								if (hours == 1) begin
+									// goto 12
+									hours <= 12;
+								end
+								else begin
+									hours <= hours - 1;
+								end
 							end
 						end
 					end
 				end
+				
+				MINUTE: begin
+					if (set) begin
+						setting_state <= INITIAL;
+						propagate <= 1;
+					end
+					else begin
+						if (up) begin
+							if (minutes == 59) begin
+								// goto 0, do not carry
+								minutes <= 0;
+							end
+							else begin
+								minutes <= minutes + 1;
+							end
+						end
+						else begin
+							if (down) begin
+								if (minutes == 0) begin
+									minutes <= 59;
+								end
+								else begin
+									minutes <= minutes - 1;
+								end
+							end
+						end
+					end
+				end
+			endcase
 			end
-		endcase
 		end
 	end
 endmodule

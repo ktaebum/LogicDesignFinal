@@ -19,9 +19,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Clock24(
+	input enabled,
 	input clk,
 	input reset,
 	input propagate,
+	input extern_isPM,
+	input [3:0] extern_hours,
+	input [5:0] extern_minutes,
 	input [4:0] in_hours,
 	input [5:0] in_minutes,
 	
@@ -45,9 +49,28 @@ module Clock24(
 		else begin
 			if (propagate) begin
 				// load set value
-				hours <= in_hours;
-				minutes <= in_minutes;
-				seconds <= 0;
+				if (enabled) begin
+					// propagation from 24 system setter
+					hours <= in_hours;
+					minutes <= in_minutes;
+					seconds <= 0;
+				end
+				else begin
+					// propagation from 12 system setter
+					if (extern_hours == 12) begin
+						if (extern_isPM) begin
+							hours <= 12;
+						end
+						else begin
+							hours <= 0;
+						end
+					end
+					else begin
+						hours <= extern_hours + (extern_isPM * 12);
+					end
+					minutes <= extern_minutes;
+					seconds <= 0;
+				end
 			end
 			else begin
 				// normal counter
