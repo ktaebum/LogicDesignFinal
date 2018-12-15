@@ -1,0 +1,53 @@
+NET "clear" LOC = P49;
+NET "reset" LOC = P54;
+NET "set" LOC = P48;
+
+NET "disp0[6]" LOC = P3;
+NET "disp0[5]" LOC = P4;
+NET "disp0[4]" LOC = P5;
+NET "disp0[3]" LOC = P6;
+NET "disp0[2]" LOC = P7;
+NET "disp0[1]" LOC = P8;
+NET "disp0[0]" LOC = P10;
+
+NET "disp1[6]" LOC = P11;
+NET "disp1[5]" LOC = P12;
+NET "disp1[4]" LOC = P13;
+NET "disp1[3]" LOC = P15;
+NET "disp1[2]" LOC = P16;
+NET "disp1[1]" LOC = P18;
+NET "disp1[0]" LOC = P19;
+
+NET "disp2[6]" LOC = P20;
+NET "disp2[5]" LOC = P21;
+NET "disp2[4]" LOC = P24;
+NET "disp2[3]" LOC = P25;
+NET "disp2[2]" LOC = P27;
+NET "disp2[1]" LOC = P28;
+NET "disp2[0]" LOC = P29;
+
+NET "disp3[6]" LOC = P55;
+NET "disp3[5]" LOC = P58;
+NET "disp3[4]" LOC = P59;
+NET "disp3[3]" LOC = P60;
+NET "disp3[2]" LOC = P62;
+NET "disp3[1]" LOC = P63;
+NET "disp3[0]" LOC = P64;
+
+NET "disp4[6]" LOC = P68;
+NET "disp4[5]" LOC = P69;
+NET "disp4[4]" LOC = P70;
+NET "disp4[3]" LOC = P71;
+NET "disp4[2]" LOC = P72;
+NET "disp4[1]" LOC = P75;
+NET "disp4[0]" LOC = P76;
+
+NET "disp5[6]" LOC = P77;
+NET "disp5[5]" LOC = P78;
+NET "disp5[4]" LOC = P79;
+NET "disp5[3]" LOC = P82;
+NET "disp5[2]" LOC = P83;
+NET "disp5[1]" LOC = P84;
+NET "disp5[0]" LOC = P85;
+
+NET "clk" LOC = P57;

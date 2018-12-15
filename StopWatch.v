@@ -22,7 +22,7 @@ module StopWatch(
 	input m_clk,
 	input set,
 	input clear,
-	
+	input reset, 
 	output reg [5:0] minutes,
 	output reg [5:0] seconds,
 	output reg [6:0] m_seconds
@@ -31,22 +31,29 @@ module StopWatch(
 	reg isStop;
 	
 	initial begin
-		isStop <= 0;
+		isStop <= 1;
 		minutes <= 0;
 		seconds <= 0;
 		m_seconds <= 0;
 	end
 	
-	always @ (posedge m_clk or posedge set) begin
-		if (set) begin
-			isStop <= isStop + 1;
+	always @ (posedge m_clk or posedge reset) begin
+		if (reset) begin
+			isStop <= 1;
+			minutes <= 0;
+			seconds <= 0;
+			m_seconds <= 0;
 		end
 		else begin
-			if (isStop) begin
+			if (set) begin
+				isStop <= isStop + 1;
+			end
+			else if (isStop) begin
 				if (clear) begin
 					minutes <= 0;
 					seconds <= 0;
 					m_seconds <= 0;
+					isStop <= 1;
 				end
 			end
 			else begin
