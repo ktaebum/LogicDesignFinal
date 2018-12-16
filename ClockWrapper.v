@@ -36,12 +36,14 @@ module ClockWrapper(
 	output reg [3:0] bch2,
 	output reg [3:0] bch3,
 	output reg [3:0] bch4,
-	output reg [3:0] bch5
+	output reg [3:0] bch5,
+	output reg inDispState
     );
 	// 0 for 24 system, 1 for 12 system
 	reg dispMode;
 	
 	initial begin
+		inDispState <= 1;
 		dispMode <= 0;
 		alarmAlert <= 0;
 		bch0 <= 0;
@@ -69,6 +71,8 @@ module ClockWrapper(
 	wire [5:0] clock24_minutes;
 	wire [5:0] clock24_seconds;
 	
+	wire propagte;
+	
 	SimpleClock12 simpleclock12 (dispMode && (currentMode == 0), disp24to12_propagate, disp24to12_hours, disp24to12_minutes,
 		clk, real_clk, pulsed_set, reset, pulsed_up, pulsed_down,
 		disp12_state, disp12to24_isPM, disp12to24_hours, disp12to24_minutes, disp12to24_propagate,
@@ -78,8 +82,11 @@ module ClockWrapper(
 		clk, real_clk, pulsed_set, reset, pulsed_up, pulsed_down, 
 		disp24_state, disp24to12_hours, disp24to12_minutes, disp24to12_propagate,
 		clock24_hours, clock24_minutes, clock24_seconds);
+		
+	OR propagate_or (disp12to24_propagate, disp24to12_propagate, propagate);
 	
 	always @ (*) begin
+		inDispState <= (disp24_state == 0 && disp12_state == 0);
 		case (dispMode)
 			0: begin
 				// 24 system
@@ -518,46 +525,53 @@ module ClockWrapper(
 		endcase
 	end
 	
-	always @ (posedge clk or posedge reset) begin
+	always @ (posedge clk or posedge reset or posedge propagate) begin
 		if (reset) begin
 			dispMode <= 0;
 			alarmAlert <= 0;
 		end
 		else begin
-			if ((clock24_hours == alarm_hours) && 
-				(clock24_minutes == alarm_minutes) && 
-				!alarmAlert && 
-				(clock24_seconds == 0)) begin
-					// alarm match!
-					// match condition: current second must be 0 second and hour minute match
-					alarmAlert <= 1;
+			if (propagate) begin
+				// when set finished, off alarm (natural behavior)
+				alarmAlert <= 0;
 			end
 			else begin
-			if (currentMode == 0) begin
-			if (pulsed_down) begin
-				if (alarmAlert) begin
-					// turn off the alarm
-					alarmAlert <= 0;
+				if ((clock24_hours == alarm_hours) && 
+					(clock24_minutes == alarm_minutes) && 
+					!alarmAlert && 
+					(clock24_seconds == 0)) begin
+						// alarm match!
+						// match condition: current second must be 0 second and hour minute match
+						alarmAlert <= 1;
 				end
-			end
-			else begin
-			case (dispMode)
-				0: begin
-					// 24 system
-					if (disp24_state == 0 && pulsed_up) begin
-						// can change dispMode
-						dispMode <= 1;
+				else begin
+					if (currentMode == 0) begin
+						if (pulsed_down && (disp24_state == 0 && disp12_state == 0)) begin
+							// can alarm off if and only if display mode
+							if (alarmAlert) begin
+								// turn off the alarm
+								alarmAlert <= 0;
+							end
+						end
+						else begin
+							case (dispMode)
+								0: begin
+									// 24 system
+									if (disp24_state == 0 && pulsed_up) begin
+										// can change dispMode
+										dispMode <= 1;
+									end
+								end
+								1: begin
+									// 12 system
+									if (disp12_state == 0 && pulsed_up) begin
+										dispMode <= 0;
+									end
+								end
+							endcase
+						end
 					end
 				end
-				1: begin
-					// 12 system
-					if (disp12_state == 0 && pulsed_up) begin
-						dispMode <= 0;
-					end
-				end
-			endcase
-			end
-			end
 			end
 		end
 	end

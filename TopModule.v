@@ -51,11 +51,11 @@ module TopModule(
 		currentMode <= CLOCK;
 		isOnMux <= 1; // default on
 		bch0 <= 0;
-		bch1 <= 1;
-		bch2 <= 2;
-		bch3 <= 3;
-		bch4 <= 4;
-		bch5 <= 5;
+		bch1 <= 0;
+		bch2 <= 0;
+		bch3 <= 0;
+		bch4 <= 0;
+		bch5 <= 0;
 	end
 	
 	wire slow_clk;
@@ -122,6 +122,7 @@ module TopModule(
 	wire [3:0] clock_bch4;
 	wire [3:0] clock_bch5;
 	wire alarmAlert;
+	wire inDispState;
 	
 	
 	// alarm display output
@@ -141,7 +142,7 @@ module TopModule(
 	
 	ClockWrapper clockwrapper (currentMode, real_quarter, clk, real_clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
 		alarm_set_hours, alarm_set_minutes,
-		alarmAlert, clock_bch0, clock_bch1, clock_bch2, clock_bch3, clock_bch4, clock_bch5);
+		alarmAlert, clock_bch0, clock_bch1, clock_bch2, clock_bch3, clock_bch4, clock_bch5, inDispState);
 	
 	BlinkDisplayer blink_disp0 (isOnMux, bch0, tdisp0);
 	BlinkDisplayer blink_disp1 (isOnMux, bch1, tdisp1);
@@ -178,7 +179,12 @@ module TopModule(
 	always @ (*) begin
 		case (currentMode)
 			CLOCK: begin
-				isOnMux <= !alarmAlert || (alarmAlert && real_quarter);
+				if (inDispState) begin
+					isOnMux <= !alarmAlert || (alarmAlert && real_quarter);
+				end
+				else begin
+					isOnMux <= 1;
+				end
 				bch0 <= clock_bch0;
 				bch1 <= clock_bch1;
 				bch2 <= clock_bch2;
