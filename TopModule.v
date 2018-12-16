@@ -112,7 +112,7 @@ module TopModule(
 		stop_disp0, stop_disp1, stop_disp2, stop_disp3, stop_disp4, stop_disp5);
 	ClockWrapper clockwrapper (currentMode, real_quarter, clk, real_clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
 		clock_disp0, clock_disp1, clock_disp2, clock_disp3, clock_disp4, clock_disp5);
-		
+	
 	always @ (posedge clk or posedge reset) begin
 		if (reset) begin
 			currentMode <= CLOCK;
@@ -151,10 +151,5 @@ module TopModule(
 			end
 		endcase
 	end
-	
-	
-	 
-	
-
 
 endmodule

@@ -63,7 +63,6 @@ module StopWatch(
 					m_seconds <= m_seconds + 1;
 				end
 				else begin
-					// stop counting case
 					if ((minutes != 59) || (seconds != 59)) begin
 						m_seconds <= 0;
 						if (seconds < 59) begin
@@ -77,6 +76,7 @@ module StopWatch(
 						end
 					end
 					else begin
+						// if minutes == 59 && seconds == 59 && m_seconds == 99, stop
 						isStop <= isStop + 1;
 					end
 				end

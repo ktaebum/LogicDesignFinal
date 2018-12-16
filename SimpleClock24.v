@@ -41,15 +41,17 @@ module SimpleClock24(
 	output [1:0] w_current_state,
 	output [4:0] w_in_hours,
 	output [5:0] w_in_minutes,
-	output w_propagate
+	output w_propagate,
+	output [4:0] w_hours,
+	output [5:0] w_minutes
     );
 	// 24 system clock fpga board test
 	// wire w_propagate;
 	// wire [4:0] w_in_hours;
 	// wire [5:0] w_in_minutes;
 	// wire [1:0] w_current_state;
-	wire [4:0] w_hours;
-	wire [5:0] w_minutes;
+	// wire [4:0] w_hours;
+	// wire [5:0] w_minutes;
 	wire [5:0] w_seconds;
 	
 	

@@ -50,8 +50,7 @@ module Set24DispDecoder(
 	BlinkDisplayer displayer2 ((real_quarter && (currentState == 2)) || (currentState != 2), m10, disp2);
 	BlinkDisplayer displayer3 ((real_quarter && (currentState == 2)) || (currentState != 2), m1, disp3);
 	Displayer displayer4 (0, disp4);
-	Displayer displayer5 (0, disp5);
-	 
+	assign disp5 = disp4;
 	
 	always @ (*) begin
 		if (hours >= 0 && hours < 10) begin
