@@ -29,37 +29,20 @@ module AlarmWrapper(
 	
 	output [4:0] alarm_hours,
 	output [5:0] alarm_minutes,
-	output reg [6:0] dispAlarm0,
-	output reg [6:0] dispAlarm1,
-	output reg [6:0] dispAlarm2,
-	output reg [6:0] dispAlarm3,
-	output reg [6:0] dispAlarm4,
-	output reg [6:0] dispAlarm5
-    );
+	
+	output reg [3:0] bch0,
+	output reg [3:0] bch1,
+	output reg [3:0] bch2,
+	output reg [3:0] bch3,
+	output reg [3:0] bch4,
+	output reg [3:0] bch5
+	);
 	 
 	reg dispMode;
-	
-	reg [3:0] h10;
-	reg [3:0] h1;
-	
-	reg [3:0] m10;
-	reg [3:0] m1;
-	
-	reg [3:0] s10;
-	reg [3:0] s1;
 	
 	initial begin
 		// 0 for 24 system, 1 for 12 system
 		dispMode <= 0;
-		
-		h10 <= 11;
-		h1 <= 11;
-		
-		m10 <= 11;
-		m1 <= 11;
-		
-		s10 <= 11;
-		s1 <= 11;
 	end
 	 
 	wire alarm12_propagate;
@@ -67,216 +50,470 @@ module AlarmWrapper(
 	wire [3:0] alarm12_hours;
 	wire [5:0] alarm12_minutes;
 	wire [1:0] alarm12_state;
-	wire [6:0] set12_disp0;
-	wire [6:0] set12_disp1;
-	wire [6:0] set12_disp2;
-	wire [6:0] set12_disp3;
-	wire [6:0] set12_disp4;
-	wire [6:0] set12_disp5;
 	
 	wire alarm24_propagate;
 	wire [4:0] alarm24_hours;
 	wire [5:0] alarm24_minutes;
 	wire [1:0] alarm24_state;
-	wire [6:0] set24_disp0;
-	wire [6:0] set24_disp1;
-	wire [6:0] set24_disp2;
-	wire [6:0] set24_disp3;
-	wire [6:0] set24_disp4;
-	wire [6:0] set24_disp5;
-	
-	// alarm set value
-	wire [6:0] set_disp0;
-	wire [6:0] set_disp1;
-	wire [6:0] set_disp2;
-	wire [6:0] set_disp3;
-	wire [6:0] set_disp4;
-	wire [6:0] set_disp5;
-	
 	
 	Set12 alarm12set (dispMode && (currentMode == 1), clk, reset, set, display, clear, 
 		alarm12_propagate, alarm12_isPM, alarm12_hours, alarm12_minutes, alarm12_state);
 		
-	Set12DispDecoder alarm12setdispdecoder (alarm12_state, real_quarter, alarm12_isPM, alarm12_hours, alarm12_minutes, 
-		set12_disp0, set12_disp1, set12_disp2, set12_disp3, set12_disp4, set12_disp5);	
-		
 	Set24 alarm24set (!dispMode && (currentMode == 1), clk, reset, set, display, clear, 
 		alarm24_propagate, alarm24_hours, alarm24_minutes, alarm24_state);
 		
-	Set24DispDecoder alarm24setdispdecoder (alarm24_state, real_quarter, alarm24_hours, alarm24_minutes, 
-		set24_disp0, set24_disp1, set24_disp2, set24_disp3, set24_disp4, set24_disp5);
-		
-	AlarmSetter alarmsetter (clk, reset || clear, dispMode, alarm12_propagate || alarm24_propagate, 
+	AlarmSetter alarmsetter (clk, reset || (clear && (currentMode == 1)), dispMode, alarm12_propagate || alarm24_propagate, 
 		alarm12_isPM, alarm12_hours, alarm12_minutes,
 		alarm24_hours, alarm24_minutes, alarm_hours, alarm_minutes);
 	
-	/*
-	assign dispAlarm0 = set24_disp0;
-	assign dispAlarm1 = set24_disp1;
-	assign dispAlarm2 = set24_disp2;
-	assign dispAlarm3 = set24_disp3;
-	assign dispAlarm4 = set24_disp4;
-	assign dispAlarm5 = set24_disp5;
-	*/
-	
-	Displayer a_displayer0 (h10, set_disp0);
-	Displayer a_displayer1 (h1, set_disp1);
-	Displayer a_displayer2 (m10, set_disp2);
-	Displayer a_displayer3 (m1, set_disp3);
-	Displayer a_displayer4 (s10, set_disp4);
-	Displayer a_displayer5 (s1, set_disp5);
 	
 	always @ (*) begin
-		// get bit
-		if (alarm_hours == 24) begin
-			// no alarm
-			h10 <= 11;
-			h1 <= 11;
-			m10 <= 11;
-			m1 <= 11;
-			s10 <= 11;
-			s1 <= 11;
-		end
-		else begin
 		case (dispMode)
 			0: begin
 				// 24 system
-				if (alarm_hours >= 0 && alarm_hours < 10) begin
-					h10 <= 0;
-					h1 <= alarm_hours;
-				end
-				else if (alarm_hours >= 10 && alarm_hours < 20) begin
-					h10 <= 1;
-					h1 <= alarm_hours - 10;
-				end
-				else begin
-					h10 <= 2;
-					h1 <= alarm_hours - 20;
-				end
+				// seconds are always 0
 				
-				if (alarm_minutes >= 0 && alarm_minutes < 10) begin
-					m10 <= 0;
-					m1 <= alarm_minutes;
-				end
-				else if (alarm_minutes >= 10 && alarm_minutes < 20) begin
-					m10 <= 1;
-					m1 <= alarm_minutes - 10;
-				end
-				else if (alarm_minutes >= 20 && alarm_minutes < 30) begin
-					m10 <= 2;
-					m1 <= alarm_minutes - 20;
-				end
-				else if (alarm_minutes >= 30 && alarm_minutes < 40) begin
-					m10 <= 3;
-					m1 <= alarm_minutes - 30;
-				end
-				else if (alarm_minutes >= 40 && alarm_minutes < 50) begin
-					m10 <= 4;
-					m1 <= alarm_minutes - 40;
-				end
-				else begin
-					m10 <= 5;
-					m1 <= alarm_minutes - 50;
-				end
-				s10 <= 0;
-				s1 <= 0;
-			end
-			1: begin
-				h1 <= 10;
-				if (alarm_hours >= 12) begin
-					// PM
-					h10 <= 13;
-					if (alarm_hours == 12) begin
-						m10 <= 1;
-						m1 <= 2;
-					end
-					else begin
-						m10 <= 0;
-						m1 <= alarm_hours - 12;
-					end
-				end
-				else begin
-					// AM
-					h10 <= 12;
-					if (alarm_hours == 0) begin
-						m10 <= 1;
-						m1 <= 2;
-					end
-					else begin
-						m10 <= 0;
-						m1 <= alarm_hours;
-					end
-				end
-				// minute split
-				if (alarm_minutes >= 0 && alarm_minutes < 10) begin
-					s10 <= 0;
-					s1 <= alarm_minutes;
-				end
-				else if (alarm_minutes >= 10 && alarm_minutes < 20) begin
-					s10 <= 1;
-					s1 <= alarm_minutes - 10;
-				end
-				else if (alarm_minutes >= 20 && alarm_minutes < 30) begin
-					s10 <= 2;
-					s1 <= alarm_minutes - 20;
-				end
-				else if (alarm_minutes >= 30 && alarm_minutes < 40) begin
-					s10 <= 3;
-					s1 <= alarm_minutes - 30;
-				end
-				else if (alarm_minutes >= 40 && alarm_minutes < 50) begin
-					s10 <= 4;
-					s1 <= alarm_minutes - 40;
-				end
-				else begin
-					s10 <= 5;
-					s1 <= alarm_minutes - 50;
-				end
-			end
-		endcase
-		end
-		
-		case (dispMode)
-			0: begin
 				if (alarm24_state == 0) begin
-					dispAlarm0 <= set_disp0;
-					dispAlarm1 <= set_disp1;
-					dispAlarm2 <= set_disp2;
-					dispAlarm3 <= set_disp3;
-					dispAlarm4 <= set_disp4;
-					dispAlarm5 <= set_disp5;
+					// normal clock display
+					// seconds always 0
+					if (alarm_hours == 24) begin
+						bch0 <= 11;
+						bch1 <= 11;
+						bch2 <= 11;
+						bch3 <= 11;
+						bch4 <= 11;
+						bch5 <= 11;
+					end
+					else begin
+						bch4 <= 0;
+						bch5 <= 0;
+						if (alarm_hours >= 0 && alarm_hours < 10) begin
+							bch0 <= 0;
+							bch1 <= alarm_hours;
+						end
+						else if (alarm_hours >= 10 && alarm_hours < 20) begin
+							bch0 <= 1;
+							bch1 <= alarm_hours - 10;
+						end
+						else begin
+							bch0 <= 2;
+							bch1 <= alarm_hours - 20;
+						end
+						
+						if (alarm_minutes >= 0 && alarm_minutes < 10) begin
+							bch2 <= 0;
+							bch3 <= alarm_minutes;
+						end
+						else if (alarm_minutes >= 10 && alarm_minutes < 20) begin
+							bch2 <= 1;
+							bch3 <= alarm_minutes - 10;
+						end
+						else if (alarm_minutes >= 20 && alarm_minutes < 30) begin
+							bch2 <= 2;
+							bch3 <= alarm_minutes - 20;
+						end
+						else if (alarm_minutes >= 30 && alarm_minutes < 40) begin
+							bch2 <= 3;
+							bch3 <= alarm_minutes - 30;
+						end
+						else if (alarm_minutes >= 40 && alarm_minutes < 50) begin
+							bch2 <= 4;
+							bch3 <= alarm_minutes - 40;
+						end
+						else begin
+							bch2 <= 5;
+							bch3 <= alarm_minutes - 50;
+						end
+					end
 				end
 				else begin
-					dispAlarm0 <= set24_disp0;
-					dispAlarm1 <= set24_disp1;
-					dispAlarm2 <= set24_disp2;
-					dispAlarm3 <= set24_disp3;
-					dispAlarm4 <= set24_disp4;
-					dispAlarm5 <= set24_disp5;
+					// setter display
+					bch4 <= 0;
+					bch5 <= 0;
+					if (alarm24_hours >= 0 && alarm24_hours < 10) begin
+						if (alarm24_state == 1) begin
+							// setting hour, blink!
+							if (real_quarter) begin
+								bch0 <= 0;
+								bch1 <= alarm24_hours;
+							end
+							else begin
+								bch0 <= 10;
+								bch1 <= 10;
+							end
+						end
+						else begin
+							// setting minute
+							bch0 <= 0;
+							bch1 <= alarm24_hours;
+						end
+					end
+					else if (alarm24_hours >= 10 && alarm24_hours < 20) begin
+						if (alarm24_state == 1) begin
+							if (real_quarter) begin
+								bch0 <= 1;
+								bch1 <= alarm24_hours - 10;
+							end
+							else begin
+								bch0 <= 10;
+								bch1 <= 10;
+							end
+						end
+						else begin
+							bch0 <= 1;
+							bch1 <= alarm24_hours - 10;
+						end
+					end
+					else begin
+						if (alarm24_state == 1) begin
+							if (real_quarter) begin
+								bch0 <= 2;
+								bch1 <= alarm24_hours - 20;
+							end
+							else begin
+								bch0 <= 10;
+								bch1 <= 10;
+							end
+						end
+						else begin
+							bch0 <= 2;
+							bch1 <= alarm24_hours - 20;
+						end
+					end
+					
+					if (alarm24_minutes >= 0 && alarm24_minutes < 10) begin
+						if (alarm24_state == 2) begin
+							if (real_quarter) begin
+								bch2 <= 0;
+								bch3 <= alarm24_minutes;
+							end
+							else begin
+								bch2 <= 10;
+								bch3 <= 10;
+							end
+						end
+						else begin
+							bch2 <= 0;
+							bch3 <= alarm24_minutes;
+						end
+					end
+					else if (alarm24_minutes >= 10 && alarm24_minutes < 20) begin
+						if (alarm24_state == 2) begin
+							if (real_quarter) begin
+								bch2 <= 1;
+								bch3 <= alarm24_minutes - 10;
+							end
+							else begin
+								bch2 <= 10;
+								bch3 <= 10;
+							end
+						end
+						else begin
+							bch2 <= 1;
+							bch3 <= alarm24_minutes - 10;
+						end
+					end
+					else if (alarm24_minutes >= 20 && alarm24_minutes < 30) begin
+						if (alarm24_state == 2) begin
+							if (real_quarter) begin
+								bch2 <= 2;
+								bch3 <= alarm24_minutes - 20;
+							end
+							else begin
+								bch2 <= 10;
+								bch3 <= 10;
+							end
+						end
+						else begin
+							bch2 <= 2;
+							bch3 <= alarm24_minutes - 20;
+						end
+					end
+					else if (alarm24_minutes >= 30 && alarm24_minutes < 40) begin
+						if (alarm24_state == 2) begin
+							if (real_quarter) begin
+								bch2 <= 3;
+								bch3 <= alarm24_minutes - 30;
+							end
+							else begin
+								bch2 <= 10;
+								bch3 <= 10;
+							end
+						end
+						else begin
+							bch2 <= 3;
+							bch3 <= alarm24_minutes - 30;
+						end
+					end
+					else if (alarm24_minutes >= 40 && alarm24_minutes < 50) begin
+						if (alarm24_state == 2) begin
+							if (real_quarter) begin
+								bch2 <= 4;
+								bch3 <= alarm24_minutes - 40;
+							end
+							else begin
+								bch2 <= 10;
+								bch3 <= 10;
+							end
+						end
+						else begin
+							bch2 <= 4;
+							bch3 <= alarm24_minutes - 40;
+						end
+					end
+					else begin
+						if (alarm24_state == 2) begin
+							if (real_quarter) begin
+								bch2 <= 5;
+								bch3 <= alarm24_minutes - 50;
+							end
+							else begin
+								bch2 <= 10;
+								bch3 <= 10;
+							end
+						end
+						else begin
+							bch2 <= 5;
+							bch3 <= alarm24_minutes - 50;
+						end
+					end
+					
 				end
 			end
 			1: begin
+				// 12 system
 				if (alarm12_state == 0) begin
-					dispAlarm0 <= set_disp0;
-					dispAlarm1 <= set_disp1;
-					dispAlarm2 <= set_disp2;
-					dispAlarm3 <= set_disp3;
-					dispAlarm4 <= set_disp4;
-					dispAlarm5 <= set_disp5;
+					if (alarm_hours == 24) begin
+						bch0 <= 11;
+						bch1 <= 11;
+						bch2 <= 11;
+						bch3 <= 11;
+						bch4 <= 11;
+						bch5 <= 11;
+					end
+					else begin
+					// always off
+						bch1 <= 10;
+						if (alarm_hours >= 12) begin
+							// PM
+							bch0 <= 13;
+							if (alarm_hours == 12) begin
+								bch2 <= 1;
+								bch3 <= 2;
+							end
+							else begin
+								bch2 <= 0;
+								bch3 <= alarm_hours - 12;
+							end
+						end
+						else begin
+							// AM
+							bch0 <= 12;
+							if (alarm_hours == 0) begin
+								bch2 <= 1;
+								bch3 <= 2;
+							end
+							else begin
+								bch2 <= 0;
+								bch3 <= alarm_hours;
+							end
+						end
+						
+						if (alarm_minutes >= 0 && alarm_minutes < 10) begin
+							bch4 <= 0;
+							bch5 <= alarm_minutes;
+						end
+						else if (alarm_minutes >= 10 && alarm_minutes < 20) begin
+							bch4 <= 1;
+							bch5 <= alarm_minutes - 10;
+						end
+						else if (alarm_minutes >= 20 && alarm_minutes < 30) begin
+							bch4 <= 2;
+							bch5 <= alarm_minutes - 20;
+						end
+						else if (alarm_minutes >= 30 && alarm_minutes < 40) begin
+							bch4 <= 3;
+							bch5 <= alarm_minutes - 30;
+						end
+						else if (alarm_minutes >= 40 && alarm_minutes < 50) begin
+							bch4 <= 4;
+							bch5 <= alarm_minutes - 40;
+						end
+						else begin
+							bch4 <= 5;
+							bch5 <= alarm_minutes - 50;
+						end
+					end
 				end
 				else begin
-					dispAlarm0 <= set12_disp0;
-					dispAlarm1 <= set12_disp1;
-					dispAlarm2 <= set12_disp2;
-					dispAlarm3 <= set12_disp3;
-					dispAlarm4 <= set12_disp4;
-					dispAlarm5 <= set12_disp5;
+					// setter display
+					bch1 <= 10;
+					if (alarm12_isPM == 1) begin
+						// PM Set
+						if (alarm12_state == 1) begin
+							if (real_quarter) begin
+								bch0 <= 13;
+							end
+							else begin
+								bch0 <= 10;
+							end
+						end
+						else begin
+							bch0 <= 13;
+						end
+					end
+					else begin
+						// AM Set
+						if (alarm12_state == 1) begin
+							if (real_quarter) begin
+								bch0 <= 12;
+							end
+							else begin
+								bch0 <= 10;
+							end
+						end
+						else begin
+							bch0 <= 12;
+						end
+					end
+					
+					if (alarm12_hours >= 0 && alarm12_hours < 10) begin
+						if (alarm12_state == 2) begin
+							// setting hour, blink!
+							if (real_quarter) begin
+								bch2 <= 0;
+								bch3 <= alarm12_hours;
+							end
+							else begin
+								bch2 <= 10;
+								bch3 <= 10;
+							end
+						end
+						else begin
+							// setting minute
+							bch2 <= 0;
+							bch3 <= alarm12_hours;
+						end
+					end
+					else begin
+						if (alarm12_state == 2) begin
+							if (real_quarter) begin
+								bch2 <= 1;
+								bch3 <= alarm12_hours - 10;
+							end
+							else begin
+								bch2 <= 10;
+								bch3 <= 10;
+							end
+						end
+						else begin
+							bch2 <= 1;
+							bch3 <= alarm12_hours - 10;
+						end
+					end
+					
+					
+					// minute display
+					if (alarm12_minutes >= 0 && alarm12_minutes < 10) begin
+						if (alarm12_state == 3) begin
+							if (real_quarter) begin
+								bch4 <= 0;
+								bch5 <= alarm12_minutes;
+							end
+							else begin
+								bch4 <= 10;
+								bch5 <= 10;
+							end
+						end
+						else begin
+							bch4 <= 0;
+							bch5 <= alarm12_minutes;
+						end
+					end
+					else if (alarm12_minutes >= 10 && alarm12_minutes < 20) begin
+						if (alarm12_state == 3) begin
+							if (real_quarter) begin
+								bch4 <= 1;
+								bch5 <= alarm12_minutes - 10;
+							end
+							else begin
+								bch4 <= 10;
+								bch5 <= 10;
+							end
+						end
+						else begin
+							bch4 <= 1;
+							bch5 <= alarm12_minutes - 10;
+						end
+					end
+					else if (alarm12_minutes >= 20 && alarm12_minutes < 30) begin
+						if (alarm12_state == 3) begin
+							if (real_quarter) begin
+								bch4 <= 2;
+								bch5 <= alarm12_minutes - 20;
+							end
+							else begin
+								bch4 <= 10;
+								bch5 <= 10;
+							end
+						end
+						else begin
+							bch4 <= 2;
+							bch5 <= alarm12_minutes - 20;
+						end
+					end
+					else if (alarm12_minutes >= 30 && alarm12_minutes < 40) begin
+						if (alarm12_state == 3) begin
+							if (real_quarter) begin
+								bch4 <= 3;
+								bch5 <= alarm12_minutes - 30;
+							end
+							else begin
+								bch4 <= 10;
+								bch5 <= 10;
+							end
+						end
+						else begin
+							bch4 <= 3;
+							bch5 <= alarm12_minutes - 30;
+						end
+					end
+					else if (alarm12_minutes >= 40 && alarm12_minutes < 50) begin
+						if (alarm12_state == 3) begin
+							if (real_quarter) begin
+								bch4 <= 4;
+								bch5 <= alarm12_minutes - 40;
+							end
+							else begin
+								bch4 <= 10;
+								bch5 <= 10;
+							end
+						end
+						else begin
+							bch4 <= 4;
+							bch5 <= alarm12_minutes - 40;
+						end
+					end
+					else begin
+						if (alarm12_state == 3) begin
+							if (real_quarter) begin
+								bch4 <= 5;
+								bch5 <= alarm12_minutes - 50;
+							end
+							else begin
+								bch4 <= 10;
+								bch5 <= 10;
+							end
+						end
+						else begin
+							bch4 <= 5;
+							bch5 <= alarm12_minutes - 50;
+						end
+					end
 				end
 			end
 		endcase
-		
 	end
-	
 	
 	always @ (posedge clk or posedge reset) begin
 		if (reset) begin

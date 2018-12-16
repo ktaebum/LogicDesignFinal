@@ -19,6 +19,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Clock12MergedDispDecoder(
+	input is_on,
+	
+	// set related
+	input [1:0] current_set_state,
+	input set_isPM 
     );
 
 
