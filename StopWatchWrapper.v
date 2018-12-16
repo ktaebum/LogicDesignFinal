@@ -45,7 +45,7 @@ module StopWatchWrapper(
 			bch1 <= 10;
 		end
 		else if (w_minutes > 0 && w_minutes < 10) begin
-			bch0 <= 0;
+			bch0 <= 10;
 			bch1 <= w_minutes;
 		end
 		else if (w_minutes >= 10 && w_minutes < 20) begin
