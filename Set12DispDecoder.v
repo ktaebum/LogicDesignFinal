@@ -19,6 +19,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Set12DispDecoder(
+	input [1:0] currentState,
+	input real_quarter,
    input isPM,
 	input [3:0] hours,
 	input [5:0] minutes,
@@ -47,12 +49,12 @@ module Set12DispDecoder(
 		m1 = 0;
 	end
 	
-	Displayer displayer0 (isPM2BCD, disp0);
+	BlinkDisplayer displayer0 ((real_quarter && currentState == 1) || (currentState != 1), isPM2BCD, disp0);
 	Displayer displayer1 (10, disp1);
-	Displayer displayer2 (h10, disp2);
-	Displayer displayer3 (h1, disp3);
-	Displayer displayer4 (m10, disp4);
-	Displayer displayer5 (m1, disp5);
+	BlinkDisplayer displayer2 ((real_quarter && currentState == 2) || (currentState != 2), h10, disp2);
+	BlinkDisplayer displayer3 ((real_quarter && currentState == 2) || (currentState != 2), h1, disp3);
+	BlinkDisplayer displayer4 ((real_quarter && currentState == 3) || (currentState != 3), m10, disp4);
+	BlinkDisplayer displayer5 ((real_quarter && currentState == 3) || (currentState != 3), m1, disp5);
 	 
 	
 	always @ (*) begin

@@ -19,7 +19,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module SimpleClock12(
-	input setEnable, 
+	input setEnable,
+	input real_quarter,
 	input extern24_propagate,
 	input [4:0] extern24_hours,
 	input [5:0] extern24_minutes,
@@ -64,11 +65,16 @@ module SimpleClock12(
 	
 	Set12 set12 (setEnable, clk, reset, pulsed_set, pulsed_up, pulsed_down, 
 		w_propagate, w_in_isPM, w_in_hours, w_in_minutes, w_current_state);
-	Set12DispDecoder set12dispdecoder (w_in_isPM, w_in_hours, w_in_minutes, set_disp0, set_disp1, set_disp2, set_disp3, set_disp4, set_disp5);
+	
+	Set12DispDecoder set12dispdecoder (w_current_state, real_quarter, w_in_isPM, w_in_hours, w_in_minutes, 
+		set_disp0, set_disp1, set_disp2, set_disp3, set_disp4, set_disp5);
+	
 	Clock12 clock12 (setEnable, real_clk, reset, w_propagate || extern24_propagate,
 		extern24_hours, extern24_minutes,
 		w_in_isPM, w_in_hours, w_in_minutes, w_isPM, w_hours, w_minutes);
-	Clock12DispDecoder clock12dispdecoder (w_isPM, w_hours, w_minutes, clock_disp0, clock_disp1, clock_disp2, clock_disp3, clock_disp4, clock_disp5);
+	
+	Clock12DispDecoder clock12dispdecoder (w_isPM, w_hours, w_minutes, 
+		clock_disp0, clock_disp1, clock_disp2, clock_disp3, clock_disp4, clock_disp5);
 	
 	always @ (*) begin
 		if (w_current_state == 0) begin

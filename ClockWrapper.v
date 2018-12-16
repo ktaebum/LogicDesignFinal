@@ -67,7 +67,7 @@ module ClockWrapper(
 	wire disp24to12_propagate;
 	
 	
-	SimpleClock12 simpleclock12 (dispMode && (currentMode == 0), disp24to12_propagate, disp24to12_hours, disp24to12_minutes,
+	SimpleClock12 simpleclock12 (dispMode && (currentMode == 0), real_quarter, disp24to12_propagate, disp24to12_hours, disp24to12_minutes,
 		clk, real_clk, pulsed_set, reset, pulsed_up, pulsed_down, 
 		disp12_0, disp12_1, disp12_2, disp12_3, disp12_4, disp12_5, disp12_state,
 		disp12to24_isPM, disp12to24_hours, disp12to24_minutes, disp12to24_propagate);
