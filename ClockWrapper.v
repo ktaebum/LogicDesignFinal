@@ -72,13 +72,6 @@ module ClockWrapper(
 	wire [4:0] clock24_hours;
 	wire [5:0] clock24_minutes;
 	
-	wire [6:0] dispalarm_0;
-	wire [6:0] dispalarm_1;
-	wire [6:0] dispalarm_2;
-	wire [6:0] dispalarm_3;
-	wire [6:0] dispalarm_4;
-	wire [6:0] dispalarm_5;
-	
 	SimpleClock12 simpleclock12 (dispMode && (currentMode == 0), real_quarter, disp24to12_propagate, disp24to12_hours, disp24to12_minutes,
 		clk, real_clk, pulsed_set, reset, pulsed_up, pulsed_down, 
 		disp12_0, disp12_1, disp12_2, disp12_3, disp12_4, disp12_5, disp12_state,
@@ -89,17 +82,7 @@ module ClockWrapper(
 		disp24_0, disp24_1, disp24_2, disp24_3, disp24_4, disp24_5, disp24_state,
 		disp24to12_hours, disp24to12_minutes, disp24to12_propagate,
 		clock24_hours, clock24_minutes);
-	
-	always @ (clock24_hours or clock24_minutes) begin
-		if ((clock24_hours == alarm_hours) && 
-		(clock24_minutes == alarm_minutes) && 
-		(disp24_5 == 7'b1111110)) begin
-			// alarm match!
-			// match condition: current second must be 0 second and hour minute match
-			alarmAlert <= 1;
-		end
-	end
-	
+
 	always @ (*) begin
 		if (alarmAlert) begin
 			if (dispMode) begin
@@ -170,8 +153,19 @@ module ClockWrapper(
 	always @ (posedge clk or posedge reset) begin
 		if (reset) begin
 			dispMode <= 0;
+			alarmAlert <= 0;
 		end
 		else begin
+			if ((clock24_hours == alarm_hours) && 
+				(clock24_minutes == alarm_minutes) && 
+				(disp24_5 == 7'b1111110) && !alarmAlert
+				&& (disp24_state == 0)) begin
+					// alarm match!
+					// match condition: current second must be 0 second and hour minute match
+					alarmAlert <= 1;
+			end
+			else begin
+			if (currentMode == 0) begin
 			if (pulsed_down) begin
 				if (alarmAlert) begin
 					// turn off the alarm
@@ -194,6 +188,8 @@ module ClockWrapper(
 					end
 				end
 			endcase
+			end
+			end
 			end
 		end
 	end

@@ -108,10 +108,27 @@ module TopModule(
 	wire [6:0] clock_disp4;
 	wire [6:0] clock_disp5;
 	
+	// alarm display output
+	wire [4:0] alarm_set_hours;
+	wire [5:0] alarm_set_minutes;
+	wire [6:0] alarm_disp0;
+	wire [6:0] alarm_disp1;
+	wire [6:0] alarm_disp2;
+	wire [6:0] alarm_disp3;
+	wire [6:0] alarm_disp4;
+	wire [6:0] alarm_disp5;
+	
 	StopWatchWrapper stopwatchwrapper (currentMode, mili_clk, pulsed_set_slow, pulsed_op1_slow, reset,
 		stop_disp0, stop_disp1, stop_disp2, stop_disp3, stop_disp4, stop_disp5);
+	
 	ClockWrapper clockwrapper (currentMode, real_quarter, clk, real_clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
+		alarm_set_hours, alarm_set_minutes,
 		clock_disp0, clock_disp1, clock_disp2, clock_disp3, clock_disp4, clock_disp5);
+		
+	
+	AlarmWrapper alarmwrapper (currentMode, real_quarter, clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
+		alarm_set_hours, alarm_set_minutes, alarm_disp0, alarm_disp1, alarm_disp2, alarm_disp3, alarm_disp4, alarm_disp5);
+	
 	
 	always @ (posedge clk or posedge reset) begin
 		if (reset) begin
@@ -121,6 +138,9 @@ module TopModule(
 			if (pulsed_mode) begin
 				case (currentMode)
 					CLOCK: begin
+						currentMode <= ALARM;
+					end
+					ALARM: begin
 						currentMode <= STOPWATCH;
 					end
 					STOPWATCH: begin
@@ -149,6 +169,14 @@ module TopModule(
 				tdisp4 <= stop_disp4;
 				tdisp5 <= stop_disp5;
 			end
+			ALARM: begin
+				tdisp0 <= alarm_disp0;
+				tdisp1 <= alarm_disp1;
+				tdisp2 <= alarm_disp2;
+				tdisp3 <= alarm_disp3;
+				tdisp4 <= alarm_disp4;
+				tdisp5 <= alarm_disp5;
+			end	
 		endcase
 	end
 

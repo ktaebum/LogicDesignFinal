@@ -19,9 +19,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module AlarmClock12(
-   input enabled,
+   input setEnabled,
 	input clk,
+	input set,
+	input up,
+	input down,
 	input reset,
+	
 	input propagate,
 	input [4:0] extern_hours,
 	input [5:0] extern_minutes,
