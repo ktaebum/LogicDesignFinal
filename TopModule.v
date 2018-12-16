@@ -26,12 +26,12 @@ module TopModule(
 	input op2,
 	input reset,
 	
-	output reg [6:0] tdisp0,
-	output reg [6:0] tdisp1,
-	output reg [6:0] tdisp2,
-	output reg [6:0] tdisp3,
-	output reg [6:0] tdisp4,
-	output reg [6:0] tdisp5
+	output [6:0] tdisp0,
+	output [6:0] tdisp1,
+	output [6:0] tdisp2,
+	output [6:0] tdisp3,
+	output [6:0] tdisp4,
+	output [6:0] tdisp5
     );
 	 
 	parameter CLOCK = 2'b00;
@@ -107,12 +107,12 @@ module TopModule(
 	PulseGenerator pulsegenerator6 (clk, reset, debounced_op2, pulsed_op2);
 	
 	// stop watch display output
-	wire [6:0] stop_disp0;
-	wire [6:0] stop_disp1;
-	wire [6:0] stop_disp2;
-	wire [6:0] stop_disp3;
-	wire [6:0] stop_disp4;
-	wire [6:0] stop_disp5;
+	wire [3:0] stop_bch0;
+	wire [3:0] stop_bch1;
+	wire [3:0] stop_bch2;
+	wire [3:0] stop_bch3;
+	wire [3:0] stop_bch4;
+	wire [3:0] stop_bch5;
 	
 	// stop watch display output
 	wire [3:0] clock_bch0;
@@ -124,13 +124,6 @@ module TopModule(
 	wire alarmAlert;
 	
 	
-	wire [6:0] clock_disp0;
-	wire [6:0] clock_disp1;
-	wire [6:0] clock_disp2;
-	wire [6:0] clock_disp3;
-	wire [6:0] clock_disp4;
-	wire [6:0] clock_disp5;
-	
 	// alarm display output
 	wire [3:0] alarm_bch0;
 	wire [3:0] alarm_bch1;
@@ -139,41 +132,24 @@ module TopModule(
 	wire [3:0] alarm_bch4;
 	wire [3:0] alarm_bch5;
 	
-	
 	wire [4:0] alarm_set_hours;
 	wire [5:0] alarm_set_minutes;
-	wire [6:0] alarm_disp0;
-	wire [6:0] alarm_disp1;
-	wire [6:0] alarm_disp2;
-	wire [6:0] alarm_disp3;
-	wire [6:0] alarm_disp4;
-	wire [6:0] alarm_disp5;
+
 	
 	StopWatchWrapper stopwatchwrapper (currentMode, mili_clk, pulsed_set_slow, pulsed_op1_slow, reset,
-		stop_disp0, stop_disp1, stop_disp2, stop_disp3, stop_disp4, stop_disp5);
+		stop_bch0, stop_bch1, stop_bch2, stop_bch3, stop_bch4, stop_bch5);
 	
-	/*
-	ClockWrapper clockwrapper (currentMode, real_quarter, clk, real_clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
-		alarm_set_hours, alarm_set_minutes,
-		clock_disp0, clock_disp1, clock_disp2, clock_disp3, clock_disp4, clock_disp5);
-	*/
 	ClockWrapper clockwrapper (currentMode, real_quarter, clk, real_clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
 		alarm_set_hours, alarm_set_minutes,
 		alarmAlert, clock_bch0, clock_bch1, clock_bch2, clock_bch3, clock_bch4, clock_bch5);
 	
-	BlinkDisplayer blink_disp0 (isOnMux, bch0, clock_disp0);
-	BlinkDisplayer blink_disp1 (isOnMux, bch1, clock_disp1);
-	BlinkDisplayer blink_disp2 (isOnMux, bch2, clock_disp2);
-	BlinkDisplayer blink_disp3 (isOnMux, bch3, clock_disp3);
-	BlinkDisplayer blink_disp4 (isOnMux, bch4, clock_disp4);
-	BlinkDisplayer blink_disp5 (isOnMux, bch5, clock_disp5);
+	BlinkDisplayer blink_disp0 (isOnMux, bch0, tdisp0);
+	BlinkDisplayer blink_disp1 (isOnMux, bch1, tdisp1);
+	BlinkDisplayer blink_disp2 (isOnMux, bch2, tdisp2);
+	BlinkDisplayer blink_disp3 (isOnMux, bch3, tdisp3);
+	BlinkDisplayer blink_disp4 (isOnMux, bch4, tdisp4);
+	BlinkDisplayer blink_disp5 (isOnMux, bch5, tdisp5);
 
-	
-	
-	/*
-	AlarmWrapper alarmwrapper (currentMode, real_quarter, clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
-		alarm_set_hours, alarm_set_minutes, alarm_disp0, alarm_disp1, alarm_disp2, alarm_disp3, alarm_disp4, alarm_disp5);
-	*/
 	AlarmWrapper alarmwrapper (currentMode, real_quarter, clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
 		alarm_set_hours, alarm_set_minutes, alarm_bch0, alarm_bch1, alarm_bch2, alarm_bch3, alarm_bch4, alarm_bch5);
 	
@@ -209,21 +185,15 @@ module TopModule(
 				bch3 <= clock_bch3;
 				bch4 <= clock_bch4;
 				bch5 <= clock_bch5;
-				
-				tdisp0 <= clock_disp0;
-				tdisp1 <= clock_disp1;
-				tdisp2 <= clock_disp2;
-				tdisp3 <= clock_disp3;
-				tdisp4 <= clock_disp4;
-				tdisp5 <= clock_disp5;
 			end
 			STOPWATCH: begin
-				tdisp0 <= stop_disp0;
-				tdisp1 <= stop_disp1;
-				tdisp2 <= stop_disp2;
-				tdisp3 <= stop_disp3;
-				tdisp4 <= stop_disp4;
-				tdisp5 <= stop_disp5;
+				isOnMux <= 1;
+				bch0 <= stop_bch0;
+				bch1 <= stop_bch1;
+				bch2 <= stop_bch2;
+				bch3 <= stop_bch3;
+				bch4 <= stop_bch4;
+				bch5 <= stop_bch5;
 			end
 			ALARM: begin
 				isOnMux <= 1;
@@ -233,13 +203,6 @@ module TopModule(
 				bch3 <= alarm_bch3;
 				bch4 <= alarm_bch4;
 				bch5 <= alarm_bch5;
-				
-				tdisp0 <= clock_disp0;
-				tdisp1 <= clock_disp1;
-				tdisp2 <= clock_disp2;
-				tdisp3 <= clock_disp3;
-				tdisp4 <= clock_disp4;
-				tdisp5 <= clock_disp5;
 			end	
 		endcase
 	end
