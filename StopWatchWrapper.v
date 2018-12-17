@@ -31,14 +31,17 @@ module StopWatchWrapper(
 	output reg [3:0] bch2,
 	output reg [3:0] bch3,
 	output reg [3:0] bch4,
-	output reg [3:0] bch5
+	output reg [3:0] bch5,
+	output [1:0] showMode
 	);
 	 
 	wire [5:0] w_minutes;
 	wire [5:0] w_seconds;
 	wire [6:0] w_m_seconds;
 	
-	StopWatch stopwatch (currentMode, mili_clk, mili_set, mili_clear, reset, w_minutes, w_seconds, w_m_seconds);
+	
+	
+	StopWatch stopwatch (currentMode, mili_clk, mili_set, mili_clear, mili_lap, reset, w_minutes, w_seconds, w_m_seconds, showMode);
 
 	always @ (*) begin
 		if (w_minutes == 0) begin

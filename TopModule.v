@@ -136,6 +136,7 @@ module TopModule(
 	wire [3:0] stop_bch3;
 	wire [3:0] stop_bch4;
 	wire [3:0] stop_bch5;
+	wire [1:0] stop_showMode;
 	
 	// stop watch display output
 	wire [3:0] clock_bch0;
@@ -160,8 +161,8 @@ module TopModule(
 	wire [5:0] alarm_set_minutes;
 
 	
-	StopWatchWrapper stopwatchwrapper (currentMode, mili_clk, pulsed_set_slow, pulsed_op1_slow, reset,
-		stop_bch0, stop_bch1, stop_bch2, stop_bch3, stop_bch4, stop_bch5);
+	StopWatchWrapper stopwatchwrapper (currentMode, mili_clk, pulsed_set_slow, pulsed_op1_slow, pulsed_op2_slow, reset,
+		stop_bch0, stop_bch1, stop_bch2, stop_bch3, stop_bch4, stop_bch5, stop_showMode);
 	
 	ClockWrapper clockwrapper (currentMode, real_quarter, clk, real_clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
 		alarm_set_hours, alarm_set_minutes,
@@ -181,6 +182,7 @@ module TopModule(
 	always @ (posedge clk or posedge reset) begin
 		if (reset) begin
 			currentMode <= CLOCK;
+			brightMode <= BRIGHT3;
 		end
 		else begin
 			if (pulsed_mode) begin
@@ -237,7 +239,12 @@ module TopModule(
 				bch5 <= clock_bch5;
 			end
 			STOPWATCH: begin
-				isOnMux <= 1;
+				if (stop_showMode == 0) begin
+					isOnMux <= 1;
+				end
+				else begin
+					isOnMux <= real_quarter;
+				end
 				bch0 <= stop_bch0;
 				bch1 <= stop_bch1;
 				bch2 <= stop_bch2;
