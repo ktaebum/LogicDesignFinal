@@ -24,6 +24,7 @@ module TopModule(
 	input set,
 	input op1,
 	input op2,
+	input optional,
 	input reset,
 	
 	output [6:0] tdisp0,
@@ -38,7 +39,14 @@ module TopModule(
 	parameter ALARM = 2'b01;
 	parameter STOPWATCH = 2'b10;
 	
+	parameter BRIGHT1 = 2'b00;
+	parameter BRIGHT2 = 2'b01;
+	parameter BRIGHT3 = 2'b10;
+	
 	reg [1:0] currentMode;
+	reg [1:0] brightMode;
+	reg brightness;
+	
 	reg isOnMux;
 	reg [3:0] bch0;
 	reg [3:0] bch1;
@@ -56,6 +64,8 @@ module TopModule(
 		bch3 <= 0;
 		bch4 <= 0;
 		bch5 <= 0;
+		brightMode <= BRIGHT3;
+		brightness <= 1;
 	end
 	
 	wire slow_clk;
@@ -63,7 +73,9 @@ module TopModule(
 	
 	// 100Hz clk
 	wire mili_clk;
-	MiliClockModulator miliclockmodulator (clk, reset, mili_clk);
+	wire bright1;
+	wire bright2;
+	MiliClockModulator miliclockmodulator (clk, reset, mili_clk, bright1, bright2);
 	
 	// 1Hz clk
 	wire real_clk;
@@ -106,6 +118,17 @@ module TopModule(
 	Debouncer debouncer6 (slow_clk, op2, debounced_op2);
 	PulseGenerator pulsegenerator6 (clk, reset, debounced_op2, pulsed_op2);
 	
+	wire debounced_optional;
+	wire pulsed_optional;
+	Debouncer debouncer7 (slow_clk, optional, debounced_optional);
+	PulseGenerator pulsegenerator7 (clk, reset, debounced_optional, pulsed_optional);
+	
+	// for save lap time
+	wire debounced_op2_slow;
+	wire pulsed_op2_slow;
+	Debouncer debouncer8 (slow_clk, op2, debounced_op2_slow);
+	PulseGenerator pulsegenerator8 (mili_clk, reset, debounced_op2_slow, pulsed_op2_slow);
+	
 	// stop watch display output
 	wire [3:0] stop_bch0;
 	wire [3:0] stop_bch1;
@@ -144,12 +167,12 @@ module TopModule(
 		alarm_set_hours, alarm_set_minutes,
 		alarmAlert, clock_bch0, clock_bch1, clock_bch2, clock_bch3, clock_bch4, clock_bch5, inDispState);
 	
-	BlinkDisplayer blink_disp0 (isOnMux, bch0, tdisp0);
-	BlinkDisplayer blink_disp1 (isOnMux, bch1, tdisp1);
-	BlinkDisplayer blink_disp2 (isOnMux, bch2, tdisp2);
-	BlinkDisplayer blink_disp3 (isOnMux, bch3, tdisp3);
-	BlinkDisplayer blink_disp4 (isOnMux, bch4, tdisp4);
-	BlinkDisplayer blink_disp5 (isOnMux, bch5, tdisp5);
+	BlinkDisplayer blink_disp0 (brightness && isOnMux, bch0, tdisp0);
+	BlinkDisplayer blink_disp1 (brightness && isOnMux, bch1, tdisp1);
+	BlinkDisplayer blink_disp2 (brightness && isOnMux, bch2, tdisp2);
+	BlinkDisplayer blink_disp3 (brightness && isOnMux, bch3, tdisp3);
+	BlinkDisplayer blink_disp4 (brightness && isOnMux, bch4, tdisp4);
+	BlinkDisplayer blink_disp5 (brightness && isOnMux, bch5, tdisp5);
 
 	AlarmWrapper alarmwrapper (currentMode, real_quarter, clk, pulsed_set_fast, pulsed_op1_fast, pulsed_op2, reset,
 		alarm_set_hours, alarm_set_minutes, alarm_bch0, alarm_bch1, alarm_bch2, alarm_bch3, alarm_bch4, alarm_bch5);
@@ -173,10 +196,31 @@ module TopModule(
 					end
 				endcase
 			end
+			else begin
+				if (pulsed_optional) begin
+					case(brightMode)
+						BRIGHT1: brightMode <= BRIGHT2;
+						BRIGHT2: brightMode <= BRIGHT3;
+						BRIGHT3: brightMode <= BRIGHT1;
+					endcase
+				end
+			end
 		end
 	end
 	
 	always @ (*) begin
+		case (brightMode)
+			BRIGHT1: begin
+				brightness <= bright1;
+			end
+			BRIGHT2: begin
+				brightness <= bright2;
+			end
+			BRIGHT3: begin
+				brightness <= mili_clk;
+			end
+		endcase
+	
 		case (currentMode)
 			CLOCK: begin
 				if (inDispState) begin

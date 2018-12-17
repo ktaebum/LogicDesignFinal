@@ -3,6 +3,7 @@ NET "op2" LOC = P50;
 NET "reset" LOC = P54;
 NET "mode" LOC = P47;
 NET "set" LOC = P48;
+NET "optional" LOC = P51;
 
 NET "tdisp0[6]" LOC = P3;
 NET "tdisp0[5]" LOC = P4;

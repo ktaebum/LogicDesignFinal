@@ -23,6 +23,7 @@ module StopWatchWrapper(
 	input mili_clk,
 	input mili_set,
 	input mili_clear,
+	input mili_lap,
 	input reset,
 	
 	output reg [3:0] bch0,
